@@ -24,13 +24,6 @@ public class APIExplorer3 {
 
 	public static void main(String[] args) throws IOException, ParserConfigurationException, SAXException {
 
-		// 순수 자바코드로 (클라이언트 측 코딩)
-		// 준비물
-		// 1. 서버 측 주소 - 경로
-		// StringBuilder -> 단일 스레드, 버퍼는 멀티 스레드
-		// http://localhost:8080/test?name=홍길동&age=20(쿼리 스트링 방식) 와 동일하다 -> 엔드 포인트
-		// http://localhost:8080/test?name=%ED%99%8D%EA%B8%B8%EB%8F%99&age=20 --> url
-		// 인코딩을 한 것
 		StringBuilder urlBuilder = new StringBuilder(
 				"http://apis.data.go.kr/B552584/UlfptcaAlarmInqireSvc/getUlfptcaAlarmInfo");
 		urlBuilder.append("?" + URLEncoder.encode("serviceKey", "UTF-8")
@@ -68,28 +61,21 @@ public class APIExplorer3 {
 		while ((line = rd.readLine()) != null) {
 			sb.append(line);
 		}
-		
-	
 
-//		System.out.println(sb.toString());
-		
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
 		MResponse mResponse = gson.fromJson(sb.toString(), MResponse.class);
-		
-		for(int i = 0; i < mResponse.response.body.items.size(); i++) {
+
+		for (int i = 0; i < mResponse.response.body.items.size(); i++) {
+
 			System.out.println("==================================");
 			mResponse.response.body.items.get(i).showDust();
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
-		
-		
-		
-//		Items[] items = gson.fromJson(sb.toString(), Items[].class);
-//		
-//		for(int i = 0; i < items.length; i++) {
-//			items[i].toString();
-//		}
-		
+
 		rd.close();
 		conn.disconnect();
 
@@ -99,13 +85,13 @@ public class APIExplorer3 {
 	class MResponse {
 		Response response;
 	}
-	
+
 	@Data
 	class Response {
 		Body body;
 		Header header;
 	}
-	
+
 	@Data
 	class Body {
 		int totalCount;
@@ -113,22 +99,22 @@ public class APIExplorer3 {
 		int pageNo;
 		int numOfRows;
 	}
-	
+
 	@Data
 	class Header {
 		String resultMsg;
 		String resultCode;
-		
+
 	}
-	
+
 	@Data
 	class TotalCount {
 		String totalCount;
 	}
-	
+
 	@Data
 	class Item {
-		
+
 		String clearVal;
 		String sn;
 		String districtName;
@@ -141,20 +127,11 @@ public class APIExplorer3 {
 		String clearTime;
 		String issueGbn;
 		String itemCode;
-		
+
 		public void showDust() {
 			System.out.println(districtName + "의 미세먼지는 '" + issueGbn + "' 입니다.");
 		}
-		
-		@Override
-		public String toString() {
-			return "Items [clearVal=" + clearVal + ", sn=" + sn + ", districtName=" + districtName + ", dataDate="
-					+ dataDate + ", issueVal=" + issueVal + ", issueTime=" + issueTime + ", clearDate=" + clearDate
-					+ ", issueDate=" + issueDate + ", moveName=" + moveName + ", clearTime=" + clearTime + ", issueGbn="
-					+ issueGbn + ", itemCode=" + itemCode + "]";
-		}
-		
-		
+
 	}
-	
+
 }// end of class
